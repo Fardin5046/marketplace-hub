@@ -41,7 +41,37 @@ export default function ProductDetails() {
     }).catch(() => setProduct(null)).finally(() => setLoading(false));
   }, [slug]);
 
-  if (loading) return <div className="container-page py-24 text-center text-muted-foreground">Loading…</div>;
+  if (loading) {
+    return (
+      <div className="container-page py-10 animate-pulse">
+        <div className="h-4 w-28 bg-muted rounded mb-8" />
+        <div className="grid gap-12 lg:grid-cols-2">
+          <div>
+            <div className="aspect-square w-full rounded-3xl bg-muted" />
+            <div className="mt-4 flex gap-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="h-20 w-20 rounded-2xl bg-muted" />
+              ))}
+            </div>
+          </div>
+          <div className="space-y-6">
+            <div className="h-4 w-24 bg-muted rounded" />
+            <div className="h-9 w-3/4 bg-muted rounded-lg" />
+            <div className="h-6 w-32 bg-muted rounded" />
+            <div className="h-8 w-40 bg-muted rounded-lg" />
+            <div className="space-y-2 pt-4">
+              <div className="h-4 w-full bg-muted rounded" />
+              <div className="h-4 w-5/6 bg-muted rounded" />
+            </div>
+            <div className="flex gap-4 pt-6">
+              <div className="h-12 flex-1 rounded-full bg-muted" />
+              <div className="h-12 w-12 rounded-full bg-muted" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (!product) return (
     <div className="container-page py-24 text-center">
       <p className="text-muted-foreground">Product not found.</p>

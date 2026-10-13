@@ -13,6 +13,16 @@ connectDB();
 
 const app = express();
 
+// Ensure DB is connected for serverless invocations
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.error('DB connect middleware error:', err);
+  }
+  next();
+});
+
 // Middleware
 app.use(cors({
   origin: function (origin, callback) {
@@ -96,8 +106,10 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 module.exports = app;
