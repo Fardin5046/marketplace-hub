@@ -1,4 +1,11 @@
-// Vercel Serverless Function entry point
-const app = require('../server/server');
+import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+import path from 'path';
 
-module.exports = app;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const require = createRequire(import.meta.url);
+
+const app = require(path.join(__dirname, '../server/server.js'));
+
+export default app;
