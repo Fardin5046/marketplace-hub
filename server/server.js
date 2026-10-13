@@ -17,10 +17,11 @@ const app = express();
 app.use(async (req, res, next) => {
   try {
     await connectDB();
+    next();
   } catch (err) {
     console.error('DB connect middleware error:', err);
+    return res.status(503).json({ message: 'Database connection failed: ' + (err.message || 'Unknown error') });
   }
-  next();
 });
 
 // Middleware

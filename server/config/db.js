@@ -1,24 +1,41 @@
 const mongoose = require('mongoose');
 
-let isConnected = false;
+let cached = global.mongoose;
+
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
 const connectDB = async () => {
-  if (isConnected || mongoose.connection.readyState === 1) {
-    return;
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+      serverSelectionTimeoutMS: 10000,
+      connectTimeoutMS: 10000,
+    };
+
+    cached.promise = mongoose.connect(process.env.MONGO_URI, opts).then((m) => {
+      console.log(`Database Connected: ${m.connection.host}`);
+      return m;
+    });
   }
 
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 8000,
-    });
-    isConnected = true;
-    console.log(`Database Connected: ${conn.connection.host}`);
-  } catch (error) {
-    console.error(`Database Connection Error: ${error.message}`);
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    console.error(`Database Connection Error: ${e.message}`);
     if (!process.env.VERCEL) {
       process.exit(1);
     }
+    throw e;
   }
+
+  return cached.conn;
 };
 
 module.exports = connectDB;
