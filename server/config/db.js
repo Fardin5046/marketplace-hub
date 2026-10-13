@@ -18,7 +18,13 @@ const connectDB = async () => {
       connectTimeoutMS: 10000,
     };
 
-    cached.promise = mongoose.connect(process.env.MONGO_URI, opts).then((m) => {
+    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI;
+    if (!mongoUri) {
+      console.error('Neither MONGO_URI nor MONGODB_URI is defined!');
+      throw new Error('Database connection string is missing.');
+    }
+
+    cached.promise = mongoose.connect(mongoUri, opts).then((m) => {
       console.log(`Database Connected: ${m.connection.host}`);
       return m;
     });

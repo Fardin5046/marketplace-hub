@@ -27,9 +27,12 @@ export default function ProductDetails() {
   const [reviewComment, setReviewComment] = useState("");
   const [reviewBusy, setReviewBusy] = useState(false);
 
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   useEffect(() => {
     if (!slug) return;
     setLoading(true);
+    setErrorMsg(null);
     productApi.get(slug).then((p: any) => {
       setProduct(p);
       setSize(p.sizes?.[1] || p.sizes?.[0]);
@@ -38,7 +41,10 @@ export default function ProductDetails() {
       // Fetch related & reviews
       productApi.related(p._id).then((r: any) => setRelated(Array.isArray(r) ? r : [])).catch(() => {});
       reviewApi.forProduct(p._id).then((d: any) => setReviews(d.reviews || [])).catch(() => {});
-    }).catch(() => setProduct(null)).finally(() => setLoading(false));
+    }).catch((err: any) => {
+      setProduct(null);
+      setErrorMsg(err?.response?.data?.message || err?.message || "Product not found.");
+    }).finally(() => setLoading(false));
   }, [slug]);
 
   if (loading) {
@@ -74,8 +80,16 @@ export default function ProductDetails() {
   }
   if (!product) return (
     <div className="container-page py-24 text-center">
-      <p className="text-muted-foreground">Product not found.</p>
-      <Link to="/shop" className="mt-4 inline-block underline">Back to shop</Link>
+      <p className="text-muted-foreground">{errorMsg || "Product not found."}</p>
+      <div className="mt-4 flex items-center justify-center gap-4">
+        <Link to="/shop" className="underline text-sm font-medium">Back to shop</Link>
+        <button
+          onClick={() => window.location.reload()}
+          className="text-sm font-medium underline text-muted-foreground hover:text-foreground cursor-pointer"
+        >
+          Refresh page
+        </button>
+      </div>
     </div>
   );
 
