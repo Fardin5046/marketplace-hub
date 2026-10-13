@@ -153,3 +153,47 @@
     @apply transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[var(--shadow-card)];
   }
 }
+
+/* Print Stylesheet */
+@media print {
+  /* Hide all website chrome, navigation, headers, footers, and interactive controls */
+  header,
+  footer,
+  aside,
+  nav,
+  button,
+  .print\:hidden,
+  .no-print {
+    display: none !important;
+  }
+
+  html, body {
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    min-height: auto !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .container-page {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .card-surface {
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+  }
+
+  @page {
+    margin: 12mm 15mm;
+    size: auto;
+  }
+}
+

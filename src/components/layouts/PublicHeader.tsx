@@ -17,7 +17,7 @@ export function PublicHeader() {
   const submit = (e: React.FormEvent) => { e.preventDefault(); nav(`/search?q=${encodeURIComponent(q)}`); };
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-xl print:hidden">
       <div className="hidden bg-foreground py-2 text-center text-xs text-background md:block">
         Free worldwide shipping over $80 · Become a vendor and earn up to 92% revenue share →
       </div>
@@ -47,7 +47,7 @@ export function PublicHeader() {
           <button onClick={toggleTheme} aria-label="Toggle theme" className="hidden h-10 w-10 items-center justify-center rounded-full hover:bg-muted md:flex">
             {theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </button>
-          <Link to="/wishlist" className="relative hidden h-10 w-10 items-center justify-center rounded-full hover:bg-muted md:flex">
+          <Link to={user ? "/account/wishlist" : "/wishlist"} className="relative hidden h-10 w-10 items-center justify-center rounded-full hover:bg-muted md:flex">
             <Heart className="h-4 w-4" />
             {wishlist.length > 0 && <span className="absolute -right-0.5 -top-0.5 grid h-4 w-4 place-items-center rounded-full bg-accent text-[9px] font-bold text-accent-foreground">{wishlist.length}</span>}
           </Link>
@@ -73,7 +73,7 @@ export function PublicHeader() {
               <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search…" className="h-10 w-full rounded-full border border-border bg-background pl-9 pr-4 text-sm outline-none" />
             </div>
           </form>
-          {[{ to: "/shop", label: "Shop" }, ...categories.map((c: any) => ({ to: `/shop?category=${c.slug}`, label: c.name })), { to: "/vendors", label: "Vendors" }, { to: "/vendor/onboarding", label: "Become a Vendor" }, { to: "/wishlist", label: "Wishlist" }, { to: user ? "/account" : "/login", label: user ? "Account" : "Sign in" }].map((l) => (
+          {[{ to: "/shop", label: "Shop" }, ...categories.map((c: any) => ({ to: `/shop?category=${c.slug}`, label: c.name })), { to: "/vendors", label: "Vendors" }, { to: "/vendor/onboarding", label: "Become a Vendor" }, { to: user ? "/account/wishlist" : "/wishlist", label: "Wishlist" }, { to: user ? "/account" : "/login", label: user ? "Account" : "Sign in" }].map((l) => (
             <Link key={l.to + l.label} to={l.to} onClick={() => setOpen(false)} className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted">{l.label}</Link>
           ))}
         </div>

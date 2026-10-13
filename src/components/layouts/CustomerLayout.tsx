@@ -9,7 +9,7 @@ const tabs = [
   { to: "/account", label: "Profile", icon: User, end: true },
   { to: "/account/addresses", label: "Addresses", icon: MapPin },
   { to: "/account/orders", label: "Orders", icon: Package },
-  { to: "/wishlist", label: "Wishlist", icon: Heart },
+  { to: "/account/wishlist", label: "Wishlist", icon: Heart },
   { to: "/account/reviews", label: "Reviews", icon: Star },
   { to: "/account/settings", label: "Settings", icon: Settings },
 ];
@@ -34,25 +34,39 @@ export default function CustomerLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <PublicHeader />
-      <div className="container-page py-10">
-        <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
-          <aside>
+      <div className="container-page flex-1 py-10 w-full print:p-0 print:m-0 print:max-w-none">
+        <div className="flex flex-col md:flex-row gap-8 items-start print:block print:w-full">
+          <aside className="w-full md:w-[250px] md:shrink-0 print:hidden">
             <h2 className="mb-4 text-2xl font-bold">My account</h2>
             <nav className="card-surface overflow-hidden p-2">
               {tabs.map((t) => {
                 const active = t.end ? loc.pathname === t.to : loc.pathname.startsWith(t.to);
                 return (
-                  <Link key={t.to} to={t.to} className={cn("flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition", active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground")}>
-                    <t.icon className="h-4 w-4" />{t.label}
+                  <Link
+                    key={t.to}
+                    to={t.to}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition",
+                      active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    )}
+                  >
+                    <t.icon className="h-4 w-4 shrink-0" />
+                    <span>{t.label}</span>
                   </Link>
                 );
               })}
-              <button onClick={handleSignOut} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground">
-                <LogOut className="h-4 w-4" /> Sign out
+              <button
+                onClick={handleSignOut}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <LogOut className="h-4 w-4 shrink-0" />
+                <span>Sign out</span>
               </button>
             </nav>
           </aside>
-          <div><Outlet /></div>
+          <main className="min-w-0 flex-1 w-full print:w-full print:p-0">
+            <Outlet />
+          </main>
         </div>
       </div>
       <PublicFooter />

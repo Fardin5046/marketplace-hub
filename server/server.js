@@ -23,8 +23,16 @@ app.use(cors({
       return callback(null, true);
     }
     // Also allow the configured CLIENT_URL
-    const allowed = process.env.CLIENT_URL || 'http://localhost:8080';
-    if (origin === allowed) return callback(null, true);
+    // const allowed = process.env.CLIENT_URL || 'http://localhost:8080';
+    // if (origin === allowed) return callback(null, true);
+  const allowedOrigins = [
+    process.env.CLIENT_URL || 'http://localhost:8080',
+        'https://h3dx2h0s-8080.inc1.devtunnels.ms'
+  ];
+
+  if (allowedOrigins.includes(origin)) {
+    return callback(null, true);
+  }
     callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
@@ -87,3 +95,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+module.exports = app;

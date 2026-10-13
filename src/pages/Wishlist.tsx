@@ -1,31 +1,51 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, Navigate } from "react-router-dom";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useStore } from "@/lib/store";
 import { formatPrice, productImage } from "@/lib/mock-data";
 import { EmptyState } from "@/components/marketplace/EmptyState";
+import { cn } from "@/lib/utils";
 
 export default function Wishlist() {
   const { wishlist, toggleWishlist, addToCart, user } = useStore();
+  const loc = useLocation();
+  const inAccount = loc.pathname.startsWith("/account");
 
-  if (!user) return (
-    <div className="container-page py-16">
-      <h1 className="text-4xl font-extrabold tracking-tight mb-8">Wishlist</h1>
-      <EmptyState icon={Heart} title="Please log in" body="Log in to view your wishlist." cta={{ label: "Sign in", to: "/login" }} />
-    </div>
-  );
+  // If logged in and visiting /wishlist directly, redirect to unified account view
+  if (user && !inAccount) {
+    return <Navigate to="/account/wishlist" replace />;
+  }
 
-  if (wishlist.length === 0) return (
-    <div className="container-page py-16">
-      <h1 className="text-4xl font-extrabold tracking-tight mb-8">Wishlist</h1>
-      <EmptyState icon={Heart} title="Your wishlist is empty" body="Save products you love." cta={{ label: "Browse shop", to: "/shop" }} />
-    </div>
-  );
+  if (!user) {
+    return (
+      <div className="container-page py-16">
+        <h1 className="text-4xl font-extrabold tracking-tight mb-8">Wishlist</h1>
+        <EmptyState icon={Heart} title="Please log in" body="Log in to view your wishlist." cta={{ label: "Sign in", to: "/login" }} />
+      </div>
+    );
+  }
 
-  return (
-    <div className="container-page py-10">
-      <h1 className="text-4xl font-extrabold tracking-tight">Wishlist</h1>
-      <p className="mt-2 text-muted-foreground">{wishlist.length} saved items</p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  if (wishlist.length === 0) {
+    const empty = (
+      <>
+        <h1 className={inAccount ? "text-3xl font-extrabold tracking-tight mb-6" : "text-4xl font-extrabold tracking-tight mb-8"}>Wishlist</h1>
+        <EmptyState icon={Heart} title="Your wishlist is empty" body="Save products you love." cta={{ label: "Browse shop", to: "/shop" }} />
+      </>
+    );
+    return inAccount ? <div>{empty}</div> : <div className="container-page py-16">{empty}</div>;
+  }
+
+  const content = (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className={inAccount ? "text-3xl font-extrabold tracking-tight" : "text-4xl font-extrabold tracking-tight"}>Wishlist</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{wishlist.length} saved items</p>
+        </div>
+      </div>
+      <div className={cn(
+        "mt-6 grid gap-4 sm:grid-cols-2",
+        inAccount ? "xl:grid-cols-3" : "lg:grid-cols-4"
+      )}>
         {wishlist.map((p: any) => (
           <div key={p._id} className="card-surface hover-lift overflow-hidden group">
             <Link to={`/product/${p.slug}`} className="relative block aspect-square overflow-hidden bg-muted">
@@ -39,7 +59,7 @@ export default function Wishlist() {
                 <button onClick={() => { addToCart(p._id, 1); toggleWishlist(p._id); }} className="flex-1 rounded-full bg-foreground py-2 text-xs font-semibold text-background hover:opacity-90">
                   <ShoppingBag className="inline h-3 w-3 mr-1" /> Move to cart
                 </button>
-                <button onClick={() => toggleWishlist(p._id)} className="grid h-9 w-9 place-items-center rounded-full border border-border hover:border-foreground">
+                <button onClick={() => toggleWishlist(p._id)} className="grid h-9 w-9 place-items-center rounded-full border border-border hover:border-foreground" title="Remove from wishlist">
                   <Heart className="h-4 w-4 fill-accent text-accent" />
                 </button>
               </div>
@@ -49,4 +69,6 @@ export default function Wishlist() {
       </div>
     </div>
   );
+
+  return inAccount ? content : <div className="container-page py-10">{content}</div>;
 }

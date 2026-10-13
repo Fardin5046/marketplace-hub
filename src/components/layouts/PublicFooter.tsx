@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export function PublicFooter() {
   return (
-    <footer className="border-t border-border bg-card mt-24">
+    <footer className="border-t border-border bg-card mt-24 print:hidden">
       <div className="container-page py-16">
         <div className="grid gap-12 lg:grid-cols-4">
           <div>
