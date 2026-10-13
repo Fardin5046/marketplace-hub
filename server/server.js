@@ -22,6 +22,10 @@ app.use(cors({
     if (origin.match(/^http:\/\/localhost:\d+$/) || origin.match(/^http:\/\/127\.0\.0\.1:\d+$/)) {
       return callback(null, true);
     }
+    // Allow any Vercel domain
+    if (origin.endsWith('.vercel.app') || origin === 'https://vercel.app') {
+      return callback(null, true);
+    }
     // Also allow the configured CLIENT_URL
     // const allowed = process.env.CLIENT_URL || 'http://localhost:8080';
     // if (origin === allowed) return callback(null, true);
